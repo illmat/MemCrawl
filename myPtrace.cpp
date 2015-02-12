@@ -9,12 +9,9 @@ int attach(pid_t pid)
         perror("PTRACE_ATTACH");
         return 1;
     }
-    else
-    {
-        std::cout << "attached to " << pid << std::endl << "wait for child" << std::endl;
-        wait(&status);
-        std::cout << "Status: " << status << std::endl;
-    }
+    std::cout << "attached to " << pid << std::endl << "wait for child" << std::endl;
+    wait(&status);
+    std::cout << "Status: " << status << std::endl;
     return 0;
 }
 
@@ -27,10 +24,7 @@ int detach(pid_t pid)
         perror("PTRACE_DETACH");
         return 1;
     }
-    else
-    {
-        std::cout << "detached from " << pid << std::endl;
-    }
+    std::cout << "detached from " << pid << std::endl;
     return 0;
 }
 
@@ -46,10 +40,6 @@ int peek(pid_t pid, unsigned long addr, long &buffer)
             perror("PTRACE_DETACH");
         return 1;
     }
-    else
-    {
-        //std::cout << "peeked " << buffer << std::endl;
-    }
     return 0;
 }
 
@@ -63,9 +53,6 @@ int poke(pid_t pid, unsigned long addr, long buffer)
         perror("PTRACE_POKE");
         return 1;
     }
-    else
-    {
-        std::cout << "successfully wrote " << buffer << " to " << std::hex << "0x" << addr << std::dec << std::endl;
-    }
+    std::cout << "successfully wrote " << buffer << " to " << std::hex << "0x" << addr << std::dec << std::endl;
     return 0;
 }

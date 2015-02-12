@@ -10,34 +10,31 @@ int scanIntInit(std::vector<scanRegion> regions, std::vector<scanResult> &result
     {
         return 1;
     }
-    else
+    for (unsigned int x=0; x<regions.size(); x++)
     {
-        for (unsigned int x=0; x<regions.size(); x++)
+        scanResult result;
+        startAddr = regions[x].startRegion;
+        endAddr = regions[x].endRegion;
+
+        while (startAddr < endAddr)
         {
-            scanResult result;
-            startAddr = regions[x].startRegion;
-            endAddr = regions[x].endRegion;
 
-            while (startAddr < endAddr)
+            if (peek(pid, startAddr, buffer) != 0)
             {
-
-                if (peek(pid, startAddr, buffer) != 0)
-                {
-                    return 1;
-                }
-                if (buffer == scanValue)
-                {
-                    result.addr = startAddr;
-                    result.value = buffer;
-                    results.push_back(result);
-                }
-                startAddr += sizeof(unsigned long);
-
+                return 1;
             }
+            if (buffer == scanValue)
+            {
+                result.addr = startAddr;
+                result.value = buffer;
+                results.push_back(result);
+            }
+            startAddr += sizeof(unsigned long);
 
-        }
+         }
 
     }
+
 
     detach(pid);
     return 0;
@@ -55,24 +52,21 @@ int scanIntResults(std::vector<scanResult> &results, pid_t pid, int scanValue)
     {
         return 1;
     }
-    else
+    for (unsigned int x=0; x<results.size(); x++)
     {
-        for (unsigned int x=0; x<results.size(); x++)
+        if (peek(pid, results[x].addr, buffer) != 0)
         {
-            if (peek(pid, results[x].addr, buffer) != 0)
-            {
-                return 1;
-            }
-            if (buffer == scanValue)
-            {
-                result.addr = results[x].addr;
-                result.value = buffer;
-                newResults.push_back(result);
-            }
-
+            return 1;
+        }
+        if (buffer == scanValue)
+        {
+            result.addr = results[x].addr;
+            result.value = buffer;
+            newResults.push_back(result);
         }
 
     }
+
     results = newResults;
     detach(pid);
 
@@ -89,20 +83,17 @@ int updateIntResults(std::vector<scanResult> &results, pid_t pid)
     {
         return 1;
     }
-    else
+    for (unsigned int x=0; x<results.size(); x++)
     {
-        for (unsigned int x=0; x<results.size(); x++)
+        if (peek(pid, results[x].addr, buffer) != 0)
         {
-            if (peek(pid, results[x].addr, buffer) != 0)
-            {
-                return 1;
-            }
-            else {
-                results[x].value = buffer;
-            }
+            return 1;
         }
-
+        else {
+            results[x].value = buffer;
+        }
     }
+
     detach(pid);
 
     return 0;
@@ -115,14 +106,11 @@ int setInt(std::vector<scanResult> &results, pid_t pid, int value)
     {
         return 1;
     }
-    else
+    for (unsigned int x=0; x<results.size(); x++)
     {
-        for (unsigned int x=0; x<results.size(); x++)
+        if (poke(pid, results[x].addr, value) != 0)
         {
-            if (poke(pid, results[x].addr, value) != 0)
-            {
-                return 1;
-            }
+            return 1;
         }
     }
 
